@@ -1,0 +1,16 @@
+# .gitignore
+
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+
+# Environnement virtuel
+env/
+venv/
+
+# Fichier contenant des variables d'environnement
+.env
