@@ -129,6 +129,11 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static/')
 ]
+
+# Ajoutez cette ligne pour définir le répertoire où les fichiers statiques seront collectés
+STATIC_ROOT = BASE_DIR.joinpath('staticfiles/')
+
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 

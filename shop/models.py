@@ -37,7 +37,8 @@ class Product(models.Model):
     
 # Modèle panier
 class Cart(models.Model):
-    client = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.OneToOneField(CustomUser, related_name='cart', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
     date_commande = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=True)
     transaction_id = models.CharField(max_length=200, null=True, blank=True)
@@ -45,25 +46,29 @@ class Cart(models.Model):
     total_trans = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return f"Cart of {self.user.username}"
     
     @property
     def get_cart_total(self):
-        cartitems = self.cartitem_set.all()
-        total = sum([item.get_total for item in cartitems])
+        items = self.items.all()
+        total = sum([item.get_total for item in items])
         return total
 
     @property
     def get_cart_items(self):
-        cartitems = self.cartitem_set.all()
-        total = sum([item.quantity for item in cartitems])
+        items = self.items.all()  # Modifier cette ligne
+        total = sum([item.quantity for item in items])
         return total
 
+
 class CartItem(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, blank=True, null=True)
-    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, blank=True, null=True)
-    quantity = models.IntegerField(default=0, null=True, blank=True)
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='cart_items', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
     date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.quantity} of {self.product.name}"
 
     @property
     def get_total(self):
@@ -71,7 +76,7 @@ class CartItem(models.Model):
         return total
 
 class AddressShipping(models.Model):
-    client = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, null=True)
     cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, blank=True, null=True)
     address = models.CharField(max_length=100, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
@@ -79,4 +84,4 @@ class AddressShipping(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.address
+        return f"{self.username}'s address"

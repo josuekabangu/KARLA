@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Votre panier</h2>
+    {% if cart.items.all %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Prix unitaire</th>
+                <th>Quantité</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.product.price }}</td>
+                <td>
+                    {{ item.quantity }}
+                    <!-- Vous pouvez ajouter ici un formulaire pour changer la quantité -->
+                </td>
+                <td>{{ item.get_total }}</td>
+                <td>
+                    <a href="{% url 'shop:add_to_cart' item.product.id %}" class="btn btn-sm btn-primary">+</a>
+                    <a href="{% url 'shop:remove_from_cart' item.product.id %}" class="btn btn-sm btn-warning">-</a>
+                    <a href="{% url 'shop:remove_from_cart' item.product.id %}" class="btn btn-sm btn-danger">Retirer</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="text-end">
+        <h4>Total: {{ cart.get_cart_total }}</h4>
+        <!-- Ajoutez ici un bouton pour passer à la caisse -->
+        <a href="#" class="btn btn-success">Passer à la caisse</a>
+    </div>
+    {% else %}
+    <p>Votre panier est vide.</p>
+    {% endif %}
+</div>
+{% endblock %}
