@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Product Details{% endblock %}
+
+{% block content %}
+    <h1>{{ product.name }}</h1>
+    <p>Price: ${{ product.price }}</p>
+    <p>Description: {{ product.description }}</p>
+    <img src="{{ product.image_url }}" alt="{{ product.name }}">
+    <button class="add-to-cart" data-id="{{ product.id }}">Add to Cart</button>
+
+    {% block script %}
+        <script>
+            document.querySelector('.add-to-cart').addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                fetch(`/add-to-cart/${productId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Product added to cart!');
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        </script>
+    {% endblock %}
+{% endblock %}
